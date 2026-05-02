@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="75 Hard">
+<meta name="theme-color" content="#0a0a0a">
+<title>75 Hard Lite</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --bg2: #141414;
+  --bg3: #1e1e1e;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #f0f0f0;
+  --text2: #888;
+  --text3: #555;
+  --green: #1D9E75;
+  --green-bg: rgba(29,158,117,0.12);
+  --blue: #378ADD;
+  --blue-bg: rgba(55,138,221,0.12);
+  --amber: #EF9F27;
+  --amber-bg: rgba(239,159,39,0.12);
+  --red: #E24B4A;
+  --red-bg: rgba(226,75,74,0.12);
+  --r: 12px;
+  --rs: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { background: var(--bg); color: var(--text); font-family: 'Heebo', sans-serif; min-height: 100vh; }
+body { padding-bottom: 100px; }
+
+/* NAV */
+.nav { position: sticky; top: 0; z-index: 100; background: rgba(10,10,10,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+.nav-title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+.nav-day { font-size: 13px; color: var(--text2); }
+
+/* TABS */
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 20px; background: var(--bg); }
+.tab { flex: 1; padding: 12px 0; font-size: 13px; font-family: 'Heebo', sans-serif; color: var(--text2); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; font-weight: 500; }
+.tab.active { color: var(--text); border-bottom-color: var(--green); }
+
+/* PAGES */
+.page { display: none; padding: 20px; }
+.page.active { display: block; }
+
+/* CARDS */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 12px; }
+.card-title { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+
+/* DAY HEADER */
+.day-hero { padding: 24px 20px 16px; }
+.day-num { font-size: 56px; font-weight: 700; line-height: 1; letter-spacing: -2px; }
+.day-num span { font-size: 20px; font-weight: 300; color: var(--text2); letter-spacing: 0; }
+.day-date { font-size: 14px; color: var(--text2); margin-top: 4px; }
+.streak-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.streak-badge { background: var(--green-bg); color: var(--green); border-radius: 20px; padding: 4px 12px; font-size: 13px; font-weight: 500; }
+.freeze-badge { background: var(--blue-bg); color: var(--blue); border-radius: 20px; padding: 4px 12px; font-size: 13px; font-weight: 500; }
+
+/* PROGRESS */
+.prog-wrap { padding: 0 20px 16px; }
+.prog-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+.prog-bar { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width .5s; }
+
+/* STAT GRID */
+.stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-bottom: 12px; }
+.stat { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--rs); padding: 12px 14px; }
+.stat-n { font-size: 24px; font-weight: 700; }
+.stat-l { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.stat-n.green { color: var(--green); }
+.stat-n.blue { color: var(--blue); }
+
+/* CHECKLIST */
+.check-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--border); }
+.check-row:last-child { border-bottom: none; padding-bottom: 0; }
+.check-row:first-child { padding-top: 0; }
+.check-info { flex: 1; }
+.check-name { font-size: 15px; }
+.check-note { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.chk { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--border2); background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; }
+.chk.on { background: var(--green); border-color: var(--green); }
+.chk svg { width: 14px; height: 14px; opacity: 0; transition: opacity .15s; }
+.chk.on svg { opacity: 1; }
+
+/* TIMER */
+.timer-display { font-size: 52px; font-weight: 300; text-align: center; letter-spacing: -1px; padding: 20px 0 16px; }
+.timer-display.done { color: var(--green); }
+.timer-sub { text-align: center; font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+.timer-btns { display: flex; gap: 10px; }
+.tbtn { flex: 1; padding: 14px; border-radius: var(--rs); border: 1px solid var(--border2); background: none; font-family: 'Heebo', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); cursor: pointer; transition: all .15s; }
+.tbtn:active { transform: scale(0.97); }
+.tbtn.start { background: var(--green); border-color: var(--green); color: #fff; }
+.tbtn.stop { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+.tbtn.reset { color: var(--text2); }
+
+/* FOOD LOG */
+.food-area { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--rs); padding: 12px; font-family: 'Heebo', sans-serif; font-size: 15px; color: var(--text); resize: none; margin-bottom: 10px; min-height: 90px; }
+.food-area::placeholder { color: var(--text3); }
+.cal-result { background: var(--bg3); border-radius: var(--rs); padding: 12px; margin-top: 8px; font-size: 14px; line-height: 1.6; display: none; }
+.cal-result.show { display: block; }
+
+/* MEASURES */
+.measure-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+.measure-item { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--rs); padding: 10px 12px; }
+.measure-label { font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+.measure-inp { width: 100%; background: none; border: none; font-family: 'Heebo', sans-serif; font-size: 20px; font-weight: 500; color: var(--text); outline: none; }
+.measure-unit { font-size: 12px; color: var(--text2); }
+
+/* NOTE */
+.note-area { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--rs); padding: 12px; font-family: 'Heebo', sans-serif; font-size: 15px; color: var(--text); resize: none; min-height: 70px; }
+.note-area::placeholder { color: var(--text3); }
+
+/* BUTTONS */
+.btn { width: 100%; padding: 14px; border-radius: var(--rs); border: 1px solid var(--border2); background: none; font-family: 'Heebo', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); cursor: pointer; margin-top: 10px; transition: all .15s; }
+.btn:active { transform: scale(0.98); }
+.btn.primary { background: var(--green); border-color: var(--green); color: #fff; }
+.btn.danger { border-color: var(--red); color: var(--red); }
+.btn.secondary { color: var(--text2); }
+
+/* DOT GRID */
+.dot-grid { display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; margin: 12px 0; }
+.dot { aspect-ratio: 1; border-radius: 3px; background: var(--bg3); cursor: pointer; transition: transform .1s; }
+.dot:active { transform: scale(0.9); }
+.dot.ok { background: var(--green); }
+.dot.part { background: var(--amber); }
+.dot.bad { background: var(--red); }
+.dot.frozen { background: var(--blue); }
+.dot.berlin { background: var(--amber-bg); border: 1px solid var(--amber); }
+.dot.today { box-shadow: 0 0 0 2px var(--text); }
+
+/* LEGEND */
+.legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+.leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); }
+.leg-d { width: 10px; height: 10px; border-radius: 2px; }
+
+/* HISTORY */
+.hist-item { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--rs); padding: 14px 16px; margin-bottom: 8px; }
+.hist-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.hist-day { font-weight: 500; }
+.hist-badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; }
+.hist-checks { display: flex; gap: 6px; flex-wrap: wrap; }
+.hchk { font-size: 11px; padding: 2px 8px; border-radius: 20px; background: var(--bg3); color: var(--text2); }
+.hchk.done { background: var(--green-bg); color: var(--green); }
+
+/* TOAST */
+.toast { position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--bg2); border: 1px solid var(--border2); border-radius: 20px; padding: 10px 20px; font-size: 14px; opacity: 0; transition: all .3s; z-index: 999; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* BOTTOM NAV */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10,10,10,0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--border); display: flex; padding: 10px 0 20px; z-index: 100; }
+.bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; color: var(--text3); font-family: 'Heebo', sans-serif; font-size: 10px; cursor: pointer; padding: 4px 0; transition: color .15s; }
+.bnav-item.active { color: var(--green); }
+.bnav-icon { width: 22px; height: 22px; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-title">75 Hard Lite</div>
+  <div class="nav-day" id="navDay"></div>
+</div>
+
+<div id="pageToday" class="page active">
+  <div class="day-hero">
+    <div class="day-num"><span id="heroDay">1</span> <span>/ 75</span></div>
+    <div class="day-date" id="heroDate"></div>
+    <div class="streak-row">
+      <div class="streak-badge" id="streakBadge">סטריק: 0 ימים</div>
+      <div class="freeze-badge" id="freezeCount" style="display:none"></div>
+    </div>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-meta"><span id="progPct">0%</span><span id="progLabel">0 / 75 ימים</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+
+  <div style="padding:0 20px">
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-n green" id="statOk">0</div><div class="stat-l">ימים מלאים</div></div>
+      <div class="stat"><div class="stat-n blue" id="statStreak">0</div><div class="stat-l">סטריק נוכחי</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">אימונים — 2 חובה</div>
+      <div class="check-row">
+        <div class="check-info"><div class="check-name">אימון 1</div><div class="check-note">חדר כושר / אירובי</div></div>
+        <button class="chk" id="cw1" onclick="tog('w1')"><svg viewBox="0 0 14 14" fill="none"><polyline points="2,7 6,11 12,3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="check-row">
+        <div class="check-info"><div class="check-name">אימון 2</div><div class="check-note">הליכה / ריצה / חדר כושר</div></div>
+        <button class="chk" id="cw2" onclick="tog('w2')"><svg viewBox="0 0 14 14" fill="none"><polyline points="2,7 6,11 12,3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">תזונה</div>
+      <div class="check-row">
+        <div class="check-info"><div class="check-name">עמדתי ביעד</div><div class="check-note">עד 1,950 קל / 180+ גרם חלבון</div></div>
+        <button class="chk" id="cnu" onclick="tog('nu')"><svg viewBox="0 0 14 14" fill="none"><polyline points="2,7 6,11 12,3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <textarea class="food-area" id="foodLog" placeholder="מה אכלת היום? כתוב כאן ולחץ חשב..."></textarea>
+      <button class="btn" onclick="calcCals()">חשב קלוריות עם Claude ↗</button>
+      <div class="cal-result" id="calResult"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">טיימר התקדמות מקצועית — יעד 60 דקות</div>
+      <div class="check-row" style="margin-bottom:8px">
+        <div class="check-info"><div class="check-name">התקדמתי היום</div><div class="check-note">פורטל / קו״ח / למידה / מוצר</div></div>
+        <button class="chk" id="cpr" onclick="tog('pr')"><svg viewBox="0 0 14 14" fill="none"><polyline points="2,7 6,11 12,3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="timer-display" id="timerDisplay">60:00</div>
+      <div class="timer-sub" id="timerSub">הפעל כשמתחיל לעבוד</div>
+      <div class="timer-btns">
+        <button class="tbtn start" id="timerBtn" onclick="timerToggle()">התחל</button>
+        <button class="tbtn reset" onclick="timerReset()">אפס</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">מדדי גוף</div>
+      <div class="measure-grid">
+        <div class="measure-item">
+          <div class="measure-label">משקל <span class="measure-unit">ק״ג</span></div>
+          <input class="measure-inp" type="number" id="mWeight" placeholder="—" step="0.1" inputmode="decimal">
+        </div>
+        <div class="measure-item">
+          <div class="measure-label">היקף בטן <span class="measure-unit">ס״מ</span></div>
+          <input class="measure-inp" type="number" id="mWaist" placeholder="—" inputmode="decimal">
+        </div>
+        <div class="measure-item">
+          <div class="measure-label">היקף חזה <span class="measure-unit">ס״מ</span></div>
+          <input class="measure-inp" type="number" id="mChest" placeholder="—" inputmode="decimal">
+        </div>
+        <div class="measure-item">
+          <div class="measure-label">היקף זרוע <span class="measure-unit">ס״מ</span></div>
+          <input class="measure-inp" type="number" id="mArm" placeholder="—" inputmode="decimal">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">תמונה + הערה</div>
+      <div class="check-row">
+        <div class="check-info"><div class="check-name">צילמתי תמונה</div><div class="check-note">שלח לשיחה עם Claude לפידבק</div></div>
+        <button class="chk" id="cph" onclick="tog('ph')"><svg viewBox="0 0 14 14" fill="none"><polyline points="2,7 6,11 12,3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <textarea class="note-area" id="noteInp" placeholder="איך הרגשת היום?" style="margin-top:12px"></textarea>
+    </div>
+
+    <button class="btn primary" onclick="saveDay()">שמור יום</button>
+    <button class="btn danger" onclick="freezeDay()">הקפא יום זה</button>
+  </div>
+</div>
+
+<div id="pageGrid" class="page">
+  <div style="padding:20px">
+    <div class="legend">
+      <div class="leg"><div class="leg-d" style="background:var(--green)"></div>מלא</div>
+      <div class="leg"><div class="leg-d" style="background:var(--amber)"></div>חלקי</div>
+      <div class="leg"><div class="leg-d" style="background:var(--red)"></div>נכשל</div>
+      <div class="leg"><div class="leg-d" style="background:var(--blue)"></div>הקפאה</div>
+      <div class="leg"><div class="leg-d" style="background:var(--amber-bg);border:1px solid var(--amber)"></div>ברלין</div>
+    </div>
+    <div class="dot-grid" id="dotGrid"></div>
+    <div class="card" id="dayDetail" style="display:none">
+      <div class="card-title" id="detailTitle"></div>
+      <div id="detailBody"></div>
+    </div>
+  </div>
+</div>
+
+<div id="pageHistory" class="page">
+  <div style="padding:20px" id="histList"></div>
+</div>
+
+<div id="pageStats" class="page">
+  <div style="padding:20px">
+    <div class="card">
+      <div class="card-title">מגמת משקל</div>
+      <canvas id="weightChart" height="160"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">מגמת היקפים</div>
+      <canvas id="measureChart" height="160"></canvas>
+    </div>
+    <div class="stat-grid" style="margin-top:12px">
+      <div class="stat"><div class="stat-n green" id="st1">0</div><div class="stat-l">ימים מלאים</div></div>
+      <div class="stat"><div class="stat-n" id="st2">0</div><div class="stat-l">ימים חלקיים</div></div>
+      <div class="stat"><div class="stat-n blue" id="st3">0</div><div class="stat-l">הקפאות</div></div>
+      <div class="stat"><div class="stat-n" id="st4">0%</div><div class="stat-l">אחוז הצלחה</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <button class="bnav-item active" id="bnav0" onclick="switchPage(0)">
+    <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/></svg>
+    היום
+  </button>
+  <button class="bnav-item" id="bnav1" onclick="switchPage(1)">
+    <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    לוח
+  </button>
+  <button class="bnav-item" id="bnav2" onclick="switchPage(2)">
+    <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    היסטוריה
+  </button>
+  <button class="bnav-item" id="bnav3" onclick="switchPage(3)">
+    <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    סטטס
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const START = new Date('2026-05-01T00:00:00');
+const BERLIN_S = 56, BERLIN_E = 60;
+const TASK_LABELS = {w1:'אימון 1',w2:'אימון 2',nu:'תזונה',pr:'התקדמות',ph:'תמונה'};
+
+let data = {};
+try { data = JSON.parse(localStorage.getItem('h75_v3') || '{}'); } catch(e){}
+
+let checks = {w1:false,w2:false,nu:false,pr:false,ph:false};
+let timerSecs = 3600, timerRunning = false, timerInterval = null, timerElapsed = 0;
+
+function dayIdx() {
+  const now = new Date(); now.setHours(0,0,0,0);
+  const s = new Date(START); s.setHours(0,0,0,0);
+  return Math.min(Math.max(Math.floor((now - s) / 86400000), 0), 74);
+}
+
+function dateStr(offset) {
+  const d = new Date(START); d.setDate(d.getDate() + offset);
+  return d.toLocaleDateString('he-IL', {weekday:'long', day:'numeric', month:'long'});
+}
+
+function save() { localStorage.setItem('h75_v3', JSON.stringify(data)); }
+
+function status(d) {
+  if (!d) return 'empty';
+  if (d.freeze) return 'frozen';
+  const n = ['w1','w2','nu','pr','ph'].filter(k => d[k]).length;
+  if (n === 5) return 'ok';
+  if (n >= 2) return 'part';
+  return 'bad';
+}
+
+function calcStreak() {
+  let s = 0, i = dayIdx() - 1;
+  while (i >= 0) {
+    const st = status(data[i]);
+    if (st === 'ok') s++;
+    else if (st === 'frozen') { i--; continue; }
+    else break;
+    i--;
+  }
+  return s;
+}
+
+function tog(k) {
+  checks[k] = !checks[k];
+  document.getElementById('c' + k).classList.toggle('on', checks[k]);
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function render() {
+  const idx = dayIdx();
+  document.getElementById('heroDay').textContent = idx + 1;
+  document.getElementById('heroDate').textContent = dateStr(idx);
+  document.getElementById('navDay').textContent = 'יום ' + (idx + 1);
+
+  const streak = calcStreak();
+  document.getElementById('streakBadge').textContent = 'סטריק: ' + streak + ' ימים';
+  document.getElementById('statStreak').textContent = streak;
+
+  let ok = 0, frozen = 0;
+  for (let i = 0; i < idx; i++) {
+    const st = status(data[i]);
+    if (st === 'ok') ok++;
+    if (st === 'frozen') frozen++;
+  }
+  document.getElementById('statOk').textContent = ok;
+
+  const fc = document.getElementById('freezeCount');
+  if (frozen > 0) { fc.style.display = ''; fc.textContent = frozen + ' הקפאות'; }
+  else fc.style.display = 'none';
+
+  const pct = Math.round((ok / 75) * 100);
+  document.getElementById('progPct').textContent = pct + '%';
+  document.getElementById('progLabel').textContent = ok + ' / 75';
+  document.getElementById('progFill').style.width = pct + '%';
+
+  renderDotGrid();
+  renderHistory();
+  renderStats();
+}
+
+function renderDotGrid() {
+  const g = document.getElementById('dotGrid'); g.innerHTML = '';
+  const idx = dayIdx();
+  for (let i = 0; i < 75; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot';
+    const isBerlin = (i >= BERLIN_S && i <= BERLIN_E);
+    if (i > idx) { if (isBerlin) dot.classList.add('berlin'); }
+    else if (i === idx) { dot.classList.add('today'); if (isBerlin) dot.classList.add('berlin'); }
+    else {
+      const st = status(data[i]);
+      if (isBerlin && st === 'empty') dot.classList.add('berlin');
+      else if (st !== 'empty') dot.classList.add(st);
+    }
+    dot.onclick = () => showDayDetail(i);
+    g.appendChild(dot);
+  }
+}
+
+function showDayDetail(i) {
+  const d = data[i];
+  const detail = document.getElementById('dayDetail');
+  document.getElementById('detailTitle').textContent = 'יום ' + (i + 1) + ' — ' + dateStr(i);
+  if (!d || status(d) === 'empty') {
+    document.getElementById('detailBody').innerHTML = '<div style="color:var(--text2);font-size:14px">אין נתונים</div>';
+  } else if (d.freeze) {
+    document.getElementById('detailBody').innerHTML = '<div style="color:var(--blue);font-size:14px">יום מוקפא</div>';
+  } else {
+    const tasks = ['w1','w2','nu','pr','ph'];
+    let html = '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">';
+    tasks.forEach(k => {
+      html += `<span style="font-size:12px;padding:3px 10px;border-radius:20px;background:${d[k]?'var(--green-bg)':'var(--bg3)'};color:${d[k]?'var(--green)':'var(--text2)'}">${TASK_LABELS[k]}</span>`;
+    });
+    html += '</div>';
+    if (d.weight) html += `<div style="font-size:13px;color:var(--text2)">משקל: <span style="color:var(--text)">${d.weight} ק״ג</span></div>`;
+    if (d.note) html += `<div style="font-size:13px;color:var(--text2);margin-top:6px">${d.note}</div>`;
+    document.getElementById('detailBody').innerHTML = html;
+  }
+  detail.style.display = '';
+}
+
+function renderHistory() {
+  const list = document.getElementById('histList');
+  const idx = dayIdx();
+  let html = '';
+  for (let i = idx; i >= 0; i--) {
+    const d = data[i];
+    if (!d) continue;
+    const st = status(d);
+    const colors = {ok:['var(--green-bg)','var(--green)','מלא'],part:['var(--amber-bg)','var(--amber)','חלקי'],bad:['var(--red-bg)','var(--red)','נכשל'],frozen:['var(--blue-bg)','var(--blue)','הקפאה']};
+    const c = colors[st] || colors.bad;
+    html += `<div class="hist-item">
+      <div class="hist-top">
+        <div class="hist-day">יום ${i+1} — ${dateStr(i)}</div>
+        <span class="hist-badge" style="background:${c[0]};color:${c[1]}">${c[2]}</span>
+      </div>`;
+    if (!d.freeze) {
+      html += '<div class="hist-checks">';
+      ['w1','w2','nu','pr','ph'].forEach(k => {
+        html += `<span class="hchk ${d[k]?'done':''}">${TASK_LABELS[k]}</span>`;
+      });
+      html += '</div>';
+      if (d.weight) html += `<div style="font-size:12px;color:var(--text2);margin-top:8px">משקל: ${d.weight} ק״ג</div>`;
+    }
+    html += '</div>';
+  }
+  list.innerHTML = html || '<div style="color:var(--text2);text-align:center;padding:40px 0">עדיין אין היסטוריה</div>';
+}
+
+let wChart = null, mChart = null;
+function renderStats() {
+  const idx = dayIdx();
+  let ok = 0, part = 0, frozen = 0;
+  const wPoints = [], mPoints = [];
+  for (let i = 0; i <= idx; i++) {
+    const d = data[i]; if (!d) continue;
+    const st = status(d);
+    if (st === 'ok') ok++;
+    else if (st === 'part') part++;
+    else if (st === 'frozen') frozen++;
+    if (d.weight) wPoints.push({x: i+1, y: parseFloat(d.weight)});
+    if (d.waist) mPoints.push({x: i+1, y: parseFloat(d.waist)});
+  }
+  document.getElementById('st1').textContent = ok;
+  document.getElementById('st2').textContent = part;
+  document.getElementById('st3').textContent = frozen;
+  document.getElementById('st4').textContent = Math.round((ok / Math.max(idx,1)) * 100) + '%';
+
+  const chartOpts = (label, color) => ({
+    type: 'line',
+    data: { datasets: [{ label, data: wPoints.length ? wPoints : [{x:1,y:0}], borderColor: color, backgroundColor: 'transparent', tension: 0.4, pointRadius: 4, pointBackgroundColor: color }] },
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: {
+      x: { type:'linear', ticks:{ color:'#666', font:{size:11} }, grid:{ color:'rgba(255,255,255,0.05)' } },
+      y: { ticks:{ color:'#666', font:{size:11} }, grid:{ color:'rgba(255,255,255,0.05)' } }
+    }}
+  });
+
+  const wCtx = document.getElementById('weightChart').getContext('2d');
+  if (wChart) wChart.destroy();
+  wChart = new Chart(wCtx, chartOpts('משקל', '#1D9E75'));
+
+  const mCtx = document.getElementById('measureChart').getContext('2d');
+  if (mChart) mChart.destroy();
+  mChart = new Chart(mCtx, {
+    type: 'line',
+    data: { datasets: [{ label:'בטן', data: mPoints.length ? mPoints : [{x:1,y:0}], borderColor:'#EF9F27', backgroundColor:'transparent', tension:0.4, pointRadius:4 }] },
+    options: { responsive:true, plugins:{ legend:{ display:false } }, scales:{
+      x:{ type:'linear', ticks:{color:'#666',font:{size:11}}, grid:{color:'rgba(255,255,255,0.05)'} },
+      y:{ ticks:{color:'#666',font:{size:11}}, grid:{color:'rgba(255,255,255,0.05)'} }
+    }}
+  });
+}
+
+function saveDay() {
+  const idx = dayIdx();
+  data[idx] = {
+    ...checks,
+    food: document.getElementById('foodLog').value,
+    weight: document.getElementById('mWeight').value,
+    waist: document.getElementById('mWaist').value,
+    chest: document.getElementById('mChest').value,
+    arm: document.getElementById('mArm').value,
+    note: document.getElementById('noteInp').value,
+    timerElapsed,
+    ts: new Date().toISOString()
+  };
+  save(); render();
+  toast('יום ' + (idx+1) + ' נשמר');
+}
+
+function freezeDay() {
+  if (!confirm('להקפיא את יום ' + (dayIdx()+1) + '?')) return;
+  const idx = dayIdx();
+  data[idx] = { freeze: true, ts: new Date().toISOString() };
+  save(); render();
+  toast('יום ' + (idx+1) + ' הוקפא');
+}
+
+function calcCals() {
+  const food = document.getElementById('foodLog').value.trim();
+  if (!food) { toast('רשום קודם מה אכלת'); return; }
+  window.open('https://claude.ai', '_blank');
+  toast('העתק את רשימת האוכל לשיחה');
+}
+
+function timerToggle() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timerBtn').textContent = 'המשך';
+    document.getElementById('timerBtn').className = 'tbtn start';
+    document.getElementById('timerSub').textContent = 'בהפסקה — לחץ להמשיך';
+  } else {
+    timerRunning = true;
+    document.getElementById('timerBtn').textContent = 'עצור';
+    document.getElementById('timerBtn').className = 'tbtn stop';
+    document.getElementById('timerSub').textContent = 'רץ...';
+    timerInterval = setInterval(() => {
+      timerElapsed++;
+      const remaining = Math.max(3600 - timerElapsed, 0);
+      const m = Math.floor(remaining / 60);
+      const s = remaining % 60;
+      const disp = document.getElementById('timerDisplay');
+      disp.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+      if (remaining === 0) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        disp.className = 'timer-display done';
+        document.getElementById('timerSub').textContent = 'סיימת שעה! הצ׳קבוקס סומן אוטומטית';
+        document.getElementById('timerBtn').textContent = 'סיימת';
+        document.getElementById('timerBtn').className = 'tbtn';
+        if (!checks.pr) tog('pr');
+        toast('שעה הושלמה! מסומן אוטומטית');
+      }
+    }, 1000);
+  }
+}
+
+function timerReset() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerElapsed = 0;
+  document.getElementById('timerDisplay').textContent = '60:00';
+  document.getElementById('timerDisplay').className = 'timer-display';
+  document.getElementById('timerSub').textContent = 'הפעל כשמתחיל לעבוד';
+  document.getElementById('timerBtn').textContent = 'התחל';
+  document.getElementById('timerBtn').className = 'tbtn start';
+}
+
+const pages = ['pageToday','pageGrid','pageHistory','pageStats'];
+function switchPage(i) {
+  pages.forEach((p,j) => {
+    document.getElementById(p).className = 'page' + (j===i?' active':'');
+    document.getElementById('bnav'+j).className = 'bnav-item' + (j===i?' active':'');
+  });
+  if (i === 1) renderDotGrid();
+  if (i === 2) renderHistory();
+  if (i === 3) renderStats();
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+render();
+</script>
+</body>
+</html>
