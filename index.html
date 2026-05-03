@@ -126,15 +126,18 @@ body { padding-bottom: 100px; }
 .btn.secondary { color: var(--text2); }
 
 /* DOT GRID */
-.dot-grid { display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; margin: 12px 0; }
-.dot { aspect-ratio: 1; border-radius: 3px; background: var(--bg3); cursor: pointer; transition: transform .1s; }
+.dot-grid { margin: 12px 0; }
+.grid-row-label { font-size: 11px; color: var(--text3); font-weight: 500; margin: 14px 0 5px; letter-spacing: .02em; }
+.grid-row-label:first-child { margin-top: 0; }
+.dot-row { display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; margin-bottom: 2px; }
+.dot { height: 28px; width: 100%; border-radius: 4px; background: var(--bg3); cursor: pointer; transition: transform .1s; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.22); }
 .dot:active { transform: scale(0.9); }
-.dot.ok { background: var(--green); }
-.dot.part { background: var(--amber); }
-.dot.bad { background: var(--red); }
-.dot.frozen { background: var(--blue); }
+.dot.ok { background: var(--green); color: rgba(255,255,255,0.9); }
+.dot.part { background: var(--amber); color: rgba(255,255,255,0.9); }
+.dot.bad { background: var(--red); color: rgba(255,255,255,0.9); }
+.dot.frozen { background: var(--blue); color: rgba(255,255,255,0.9); }
 .dot.berlin { background: var(--amber-bg); border: 1px solid var(--amber); }
-.dot.today { box-shadow: 0 0 0 2px var(--text); }
+.dot.today { box-shadow: 0 0 0 2px var(--text); color: var(--text); }
 
 /* LEGEND */
 .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -159,6 +162,55 @@ body { padding-bottom: 100px; }
 .bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; color: var(--text3); font-family: 'Heebo', sans-serif; font-size: 10px; cursor: pointer; padding: 4px 0; transition: color .15s; }
 .bnav-item.active { color: var(--green); }
 .bnav-icon { width: 22px; height: 22px; }
+
+/* STICKY SAVE BAR */
+.save-bar { position: sticky; bottom: 82px; background: var(--bg); padding: 12px 20px 4px; margin: 8px -20px 0; border-top: 1px solid var(--border); z-index: 50; }
+.save-bar .btn { margin-top: 8px; }
+.save-bar .btn:first-child { margin-top: 0; }
+
+/* CHECK ANIMATION */
+@keyframes checkPop {
+  0% { transform: scale(1); }
+  38% { transform: scale(1.45); }
+  68% { transform: scale(0.87); }
+  100% { transform: scale(1); }
+}
+.chk.pop { animation: checkPop 0.36s ease; }
+
+/* MOTIVATION MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 24px; backdrop-filter: blur(6px); }
+.modal-overlay.hidden { display: none; }
+.modal-box { background: var(--bg2); border: 1px solid var(--border2); border-radius: 20px; padding: 32px 24px 24px; text-align: center; max-width: 360px; width: 100%; }
+.modal-day-label { font-size: 12px; color: var(--text3); margin-bottom: 14px; letter-spacing: .04em; text-transform: uppercase; }
+.modal-icon { font-size: 44px; margin-bottom: 14px; }
+.modal-quote { font-size: 19px; font-weight: 600; line-height: 1.55; margin-bottom: 10px; }
+.modal-sub { font-size: 13px; color: var(--text2); margin-bottom: 28px; line-height: 1.5; }
+.modal-go-btn { background: var(--green); color: #fff; border: none; border-radius: 12px; padding: 15px; font-family: 'Heebo', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; }
+
+/* CALORIE MODAL */
+.cal-modal { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; }
+.cal-modal.hidden { display: none; }
+.cal-modal-header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.cal-modal-title { font-size: 16px; font-weight: 600; }
+.cal-modal-close { background: none; border: none; color: var(--text2); font-size: 26px; line-height: 1; cursor: pointer; padding: 0 4px; }
+.cal-modal-body { flex: 1; overflow-y: auto; padding: 14px 16px; }
+.cal-search { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--rs); padding: 12px; font-family: 'Heebo', sans-serif; font-size: 15px; color: var(--text); margin-bottom: 12px; outline: none; }
+.cal-search::placeholder { color: var(--text3); }
+.food-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--rs); margin-bottom: 6px; }
+.food-item-name { font-size: 14px; font-weight: 500; }
+.food-item-macros { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.food-item-add { background: var(--green-bg); color: var(--green); border: 1px solid var(--green); border-radius: 20px; padding: 5px 14px; font-family: 'Heebo', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+.cal-footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 14px 16px; flex-shrink: 0; }
+.cal-totals { display: flex; gap: 20px; justify-content: center; margin-bottom: 12px; }
+.cal-total-block { text-align: center; }
+.cal-total-num { font-size: 26px; font-weight: 700; color: var(--green); }
+.cal-total-num.over { color: var(--red); }
+.cal-total-label { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.selected-foods { margin-bottom: 10px; }
+.sel-food { display: flex; align-items: center; padding: 7px 10px; background: var(--green-bg); border-radius: var(--rs); margin-bottom: 4px; gap: 6px; }
+.sel-food-name { color: var(--green); flex: 1; font-size: 13px; }
+.sel-food-cal { color: var(--text2); font-size: 12px; }
+.sel-food-remove { background: none; border: none; color: var(--red); cursor: pointer; font-size: 18px; line-height: 1; padding: 0; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -208,7 +260,7 @@ body { padding-bottom: 100px; }
         <button class="chk" id="cnu" onclick="tog('nu')"><svg viewBox="0 0 14 14" fill="none"><polyline points="2,7 6,11 12,3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
       <textarea class="food-area" id="foodLog" placeholder="מה אכלת היום? כתוב כאן ולחץ חשב..."></textarea>
-      <button class="btn" onclick="calcCals()">חשב קלוריות עם Claude ↗</button>
+      <button class="btn" onclick="calcCals()">חשב קלוריות</button>
       <div class="cal-result" id="calResult"></div>
     </div>
 
@@ -257,6 +309,8 @@ body { padding-bottom: 100px; }
       <textarea class="note-area" id="noteInp" placeholder="איך הרגשת היום?" style="margin-top:12px"></textarea>
     </div>
 
+  </div>
+  <div class="save-bar">
     <button class="btn primary" onclick="saveDay()">שמור יום</button>
     <button class="btn danger" onclick="freezeDay()">הקפא יום זה</button>
   </div>
@@ -321,6 +375,43 @@ body { padding-bottom: 100px; }
   </button>
 </div>
 
+<!-- MOTIVATION MODAL -->
+<div class="modal-overlay hidden" id="motivationModal">
+  <div class="modal-box">
+    <div class="modal-icon">💪</div>
+    <div class="modal-day-label" id="motivationDay">יום 1 מתוך 75</div>
+    <div class="modal-quote" id="motivationQuote"></div>
+    <div class="modal-sub" id="motivationSub"></div>
+    <button class="modal-go-btn" onclick="closeMotivation()">יאללה, בואו נעשה את זה!</button>
+  </div>
+</div>
+
+<!-- CALORIE MODAL -->
+<div class="cal-modal hidden" id="calModal">
+  <div class="cal-modal-header">
+    <div class="cal-modal-title">מחשבון קלוריות</div>
+    <button class="cal-modal-close" onclick="closeCalModal()">×</button>
+  </div>
+  <div class="cal-modal-body">
+    <input class="cal-search" id="calSearch" type="text" placeholder="חפש מזון בעברית..." oninput="renderCalFoodList(this.value)">
+    <div id="calFoodList"></div>
+  </div>
+  <div class="cal-footer">
+    <div id="calSelectedList" class="selected-foods"></div>
+    <div class="cal-totals">
+      <div class="cal-total-block">
+        <div class="cal-total-num" id="calTotalNum">0</div>
+        <div class="cal-total-label">קלוריות</div>
+      </div>
+      <div class="cal-total-block">
+        <div class="cal-total-num" id="calProtNum" style="color:var(--blue)">0</div>
+        <div class="cal-total-label">גרם חלבון</div>
+      </div>
+    </div>
+    <button class="btn primary" onclick="applyCalResult()" style="margin-top:0">שמור ועדכן</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -371,7 +462,15 @@ function calcStreak() {
 
 function tog(k) {
   checks[k] = !checks[k];
-  document.getElementById('c' + k).classList.toggle('on', checks[k]);
+  const btn = document.getElementById('c' + k);
+  btn.classList.toggle('on', checks[k]);
+  if (checks[k]) {
+    btn.classList.remove('pop');
+    void btn.offsetWidth;
+    btn.classList.add('pop');
+    btn.addEventListener('animationend', () => btn.classList.remove('pop'), {once: true});
+    if (['w1','w2','nu','pr','ph'].every(t => checks[t])) setTimeout(celebrate, 300);
+  }
 }
 
 function toast(msg) {
@@ -414,21 +513,39 @@ function render() {
 }
 
 function renderDotGrid() {
-  const g = document.getElementById('dotGrid'); g.innerHTML = '';
+  const g = document.getElementById('dotGrid');
+  g.innerHTML = '';
   const idx = dayIdx();
-  for (let i = 0; i < 75; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'dot';
-    const isBerlin = (i >= BERLIN_S && i <= BERLIN_E);
-    if (i > idx) { if (isBerlin) dot.classList.add('berlin'); }
-    else if (i === idx) { dot.classList.add('today'); if (isBerlin) dot.classList.add('berlin'); }
-    else {
-      const st = status(data[i]);
-      if (isBerlin && st === 'empty') dot.classList.add('berlin');
-      else if (st !== 'empty') dot.classList.add(st);
+  for (let row = 0; row < 5; row++) {
+    const startI = row * 15;
+    const endI = Math.min(startI + 14, 74);
+    const startDate = new Date(START); startDate.setDate(startDate.getDate() + startI);
+    const endDate = new Date(START); endDate.setDate(endDate.getDate() + endI);
+    const fmt = d => d.toLocaleDateString('he-IL', {day:'numeric', month:'short'});
+    const label = document.createElement('div');
+    label.className = 'grid-row-label';
+    label.textContent = `ימים ${startI+1}–${endI+1}  ·  ${fmt(startDate)} – ${fmt(endDate)}`;
+    g.appendChild(label);
+    const rowEl = document.createElement('div');
+    rowEl.className = 'dot-row';
+    for (let col = 0; col < 15; col++) {
+      const i = startI + col;
+      if (i > 74) break;
+      const dot = document.createElement('div');
+      dot.className = 'dot';
+      dot.textContent = i + 1;
+      const isBerlin = (i >= BERLIN_S && i <= BERLIN_E);
+      if (i > idx) { if (isBerlin) dot.classList.add('berlin'); }
+      else if (i === idx) { dot.classList.add('today'); if (isBerlin) dot.classList.add('berlin'); }
+      else {
+        const st = status(data[i]);
+        if (isBerlin && st === 'empty') dot.classList.add('berlin');
+        else if (st !== 'empty') dot.classList.add(st);
+      }
+      dot.onclick = () => showDayDetail(i);
+      rowEl.appendChild(dot);
     }
-    dot.onclick = () => showDayDetail(i);
-    g.appendChild(dot);
+    g.appendChild(rowEl);
   }
 }
 
@@ -552,10 +669,7 @@ function freezeDay() {
 }
 
 function calcCals() {
-  const food = document.getElementById('foodLog').value.trim();
-  if (!food) { toast('רשום קודם מה אכלת'); return; }
-  window.open('https://claude.ai', '_blank');
-  toast('העתק את רשימת האוכל לשיחה');
+  openCalModal();
 }
 
 function timerToggle() {
@@ -613,11 +727,204 @@ function switchPage(i) {
   if (i === 3) renderStats();
 }
 
+// ── CELEBRATION ──────────────────────────────────────────────────────────────
+function celebrate() {
+  const colors = ['#1D9E75','#EF9F27','#378ADD','#E24B4A','#ffffff','#FFD700'];
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden';
+  document.body.appendChild(wrap);
+  for (let i = 0; i < 72; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      const size = 5 + Math.random() * 9;
+      const dx = (Math.random() - 0.5) * 320;
+      const dy = -(120 + Math.random() * 320);
+      const rot = Math.random() * 720 - 360;
+      const dur = 900 + Math.random() * 900;
+      el.style.cssText = `position:absolute;width:${size}px;height:${size}px;background:${colors[~~(Math.random()*colors.length)]};border-radius:${Math.random()>.4?'50%':'3px'};left:${10+Math.random()*80}%;bottom:35%;`;
+      wrap.appendChild(el);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        el.style.transition = `transform ${dur}ms cubic-bezier(.1,.8,.3,1),opacity ${dur}ms ease-in`;
+        el.style.transform = `translate(${dx}px,${dy}px) rotate(${rot}deg)`;
+        el.style.opacity = '0';
+      }));
+      setTimeout(() => el.remove(), dur + 50);
+    }, i * 22);
+  }
+  setTimeout(() => wrap.remove(), 3200);
+}
+
+// ── DAILY MOTIVATION ─────────────────────────────────────────────────────────
+const MOTIVATION_QUOTES = [
+  {q:'אל תחכה לתנאים המושלמים. התחל עכשיו.',s:'עקביות מנצחת שלמות'},
+  {q:'75 יום. 75 בחירות. כל אחת מחשבת.',s:'אתה כאן כי החלטת'},
+  {q:'כאב זמני. גאווה לנצח.',s:'זכור למה התחלת'},
+  {q:'הגוף שלך לא עייף — הראש שלך עייף.',s:'הדחיפה האמיתית היא מנטלית'},
+  {q:'לא צריך להיות טוב כדי להתחיל. צריך להתחיל כדי להיות טוב.',s:'פשוט עשה את זה היום'},
+  {q:'הצלחה היא לא גורל — היא בחירה.',s:'כל יום מחדש'},
+  {q:'הספורטאי הכי גדול ממשיך כשהכי קשה.',s:'אתה חזק יותר ממה שאתה חושב'},
+  {q:'מחר תודה לגרסה של היום שלך שלא ויתרה.',s:'עשה את העתיד שלך גאה'},
+  {q:'המשמעת היא הגשר בין מטרות להישגים.',s:'בניין גשרים — יום אחד בכל פעם'},
+  {q:'אין קיצורי דרך לשינוי אמיתי.',s:'75 ימים של עבודה אמיתית'},
+  {q:'לא מה שאתה עושה מדי פעם — מה שאתה עושה תמיד.',s:'עקביות = תוצאות'},
+  {q:'הנשמה שלך יודעת מה היא מסוגלת.',s:'תן לה להוכיח את זה'},
+  {q:'שנה את הרגלי הבוקר שלך — שנה את החיים שלך.',s:'בוקר חזק = יום חזק'},
+  {q:'כל סיום אימון הוא ניצחון.',s:'אין ימים קלים — יש ימים חזקים'},
+  {q:'אנשים ממוצעים רוצים להיות בכושר. יוצאי דופן מתאמנים.',s:'אתה בחרת להיות יוצא דופן'},
+  {q:'הגוף שלך שומע כל מה שהמוח שלך אומר.',s:'דבר אל עצמך בחוזקה'},
+  {q:'דבר אחד שאתה יכול לשלוט בו לחלוטין — המאמץ.',s:'תן 100% תמיד'},
+  {q:'כל פעם שאתה מתגבר על עצמך — אתה גדל.',s:'צמיחה קורית בשאיפה'},
+  {q:'75 ימים יכולים לשנות הכל.',s:'כמה אנשים היו רוצים להיות איפה שאתה'},
+  {q:'לא מה שקרה אתמול — מה שאתה בוחר היום.',s:'כל יום הוא דף חדש'},
+];
+
+function checkDailyMotivation() {
+  const today = new Date().toDateString();
+  if (localStorage.getItem('h75_motiv_' + today)) return;
+  localStorage.setItem('h75_motiv_' + today, '1');
+  const idx = dayIdx();
+  const q = MOTIVATION_QUOTES[idx % MOTIVATION_QUOTES.length];
+  document.getElementById('motivationDay').textContent = 'יום ' + (idx + 1) + ' מתוך 75';
+  document.getElementById('motivationQuote').textContent = q.q;
+  document.getElementById('motivationSub').textContent = q.s;
+  document.getElementById('motivationModal').classList.remove('hidden');
+}
+
+function closeMotivation() {
+  document.getElementById('motivationModal').classList.add('hidden');
+}
+
+// ── CALORIE CALCULATOR ────────────────────────────────────────────────────────
+const FOOD_DB = [
+  ['ביצה',78,6,'יח׳'],
+  ['חלבון ביצה',17,4,'יח׳'],
+  ['חזה עוף',165,31,'100 גר'],
+  ['שוק עוף',215,19,'100 גר'],
+  ['קוטג׳ 5%',180,18,'גביע 250גר'],
+  ['גבינה לבנה 3%',70,8,'100 גר'],
+  ['גבינה לבנה 5%',90,10,'100 גר'],
+  ['יוגורט יווני',100,10,'100 גר'],
+  ['טונה (פחית)',120,26,'פחית 160גר'],
+  ['סלמון',208,20,'100 גר'],
+  ['לחם לבן',80,3,'פרוסה'],
+  ['לחם מלא',70,3,'פרוסה'],
+  ['אורז מבושל',130,3,'100 גר'],
+  ['פסטה מבושלת',131,5,'100 גר'],
+  ['בטטה',130,3,'יח׳ בינונית'],
+  ['שיבולת שועל',150,5,'40 גר יבש'],
+  ['בננה',105,1,'יח׳'],
+  ['תפוח',95,0,'יח׳'],
+  ['אבוקדו',120,1,'חצי'],
+  ['שמן זית',120,0,'כף'],
+  ['חומוס',166,9,'100 גר'],
+  ['טחינה',89,3,'כף'],
+  ['שייק חלבון',120,25,'מנה'],
+  ['שקדים',173,6,'30 גר'],
+  ['אגוזי מלך',196,4,'30 גר'],
+  ['חלב 3%',150,8,'כוס 240מל'],
+  ['חלב 1%',100,8,'כוס 240מל'],
+  ['סלט ירקות',60,3,'מנה גדולה'],
+  ['ברוקולי',34,3,'100 גר'],
+  ['פיתה',170,6,'יח׳'],
+  ['חטיף חלבון',200,20,'יח׳'],
+  ['גרנולה',430,9,'100 גר'],
+  ['גבינה צהובה',113,8,'פרוסה 28גר'],
+  ['עדשים מבושלות',116,9,'100 גר'],
+  ['שעועית שחורה',132,9,'100 גר'],
+  ['טופו',76,8,'100 גר'],
+  ['קפה שחור',2,0,'כוס'],
+  ['קפה עם חלב',50,2,'כוס'],
+  ['גזר',25,1,'יח׳'],
+  ['עגבנייה',22,1,'יח׳'],
+];
+
+let calSelection = [];
+
+function openCalModal() {
+  calSelection = [];
+  document.getElementById('calSearch').value = '';
+  renderCalFoodList('');
+  renderCalSelection();
+  document.getElementById('calModal').classList.remove('hidden');
+}
+
+function closeCalModal() {
+  document.getElementById('calModal').classList.add('hidden');
+}
+
+function renderCalFoodList(search) {
+  const s = search.trim();
+  const filtered = FOOD_DB.filter(f => !s || f[0].includes(s));
+  document.getElementById('calFoodList').innerHTML = filtered.map((f,_) => {
+    const idx = FOOD_DB.indexOf(f);
+    return `<div class="food-item">
+      <div>
+        <div class="food-item-name">${f[0]}</div>
+        <div class="food-item-macros">${f[1]} קל · ${f[2]}גר חלבון · ${f[3]}</div>
+      </div>
+      <button class="food-item-add" onclick="addFood(${idx})">+ הוסף</button>
+    </div>`;
+  }).join('');
+}
+
+function addFood(idx) {
+  const f = FOOD_DB[idx];
+  const existing = calSelection.find(s => s.name === f[0]);
+  if (existing) existing.qty++;
+  else calSelection.push({name:f[0], cal:f[1], prot:f[2], unit:f[3], qty:1});
+  renderCalSelection();
+}
+
+function removeFood(name) {
+  calSelection = calSelection.filter(s => s.name !== name);
+  renderCalSelection();
+}
+
+function renderCalSelection() {
+  const totalCal = calSelection.reduce((s,f) => s + f.cal * f.qty, 0);
+  const totalProt = calSelection.reduce((s,f) => s + f.prot * f.qty, 0);
+  document.getElementById('calSelectedList').innerHTML = calSelection.map(f =>
+    `<div class="sel-food">
+      <span class="sel-food-name">${f.name}${f.qty > 1 ? ' ×' + f.qty : ''}</span>
+      <span class="sel-food-cal">${f.cal * f.qty} קל</span>
+      <button class="sel-food-remove" onclick="removeFood(${JSON.stringify(f.name)})">×</button>
+    </div>`
+  ).join('');
+  const numEl = document.getElementById('calTotalNum');
+  numEl.textContent = totalCal;
+  numEl.className = 'cal-total-num' + (totalCal > 1950 ? ' over' : '');
+  const protEl = document.getElementById('calProtNum');
+  protEl.textContent = totalProt;
+  protEl.style.color = totalProt >= 180 ? 'var(--green)' : 'var(--blue)';
+}
+
+function applyCalResult() {
+  const totalCal = calSelection.reduce((s,f) => s + f.cal * f.qty, 0);
+  const totalProt = calSelection.reduce((s,f) => s + f.prot * f.qty, 0);
+  const summary = calSelection.map(f => `${f.name}${f.qty>1?' ×'+f.qty:''}`).join(', ');
+  document.getElementById('foodLog').value = summary + `\nסה"כ: ${totalCal} קל | ${totalProt}גר חלבון`;
+  const calColor = totalCal <= 1950 ? 'var(--green)' : 'var(--red)';
+  const protColor = totalProt >= 180 ? 'var(--green)' : 'var(--amber)';
+  const goalMet = totalCal <= 1950 && totalProt >= 180;
+  const resultEl = document.getElementById('calResult');
+  resultEl.innerHTML = `
+    <div style="display:flex;gap:24px;justify-content:center;margin-bottom:10px">
+      <div style="text-align:center"><div style="font-size:30px;font-weight:700;color:${calColor}">${totalCal}</div><div style="font-size:11px;color:var(--text2)">קלוריות</div></div>
+      <div style="text-align:center"><div style="font-size:30px;font-weight:700;color:${protColor}">${totalProt}</div><div style="font-size:11px;color:var(--text2)">גרם חלבון</div></div>
+    </div>
+    <div style="font-size:14px;text-align:center;color:${goalMet?'var(--green)':'var(--amber)'}">${goalMet?'✓ עמדת ביעד התזונה!':'עוד לא הגעת ליעד'}</div>`;
+  resultEl.classList.add('show');
+  if (goalMet && !checks.nu) tog('nu');
+  closeCalModal();
+  toast(goalMet ? '✓ יעד תזונה הושג!' : `${totalCal} קל · ${totalProt}גר חלבון`);
+}
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
 
 render();
+checkDailyMotivation();
 </script>
 </body>
 </html>
