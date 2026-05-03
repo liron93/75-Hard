@@ -85,7 +85,7 @@ body { padding-bottom: 100px; }
 .check-info { flex: 1; }
 .check-name { font-size: 15px; }
 .check-note { font-size: 12px; color: var(--text2); margin-top: 2px; }
-.chk { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--border2); background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; }
+.chk { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--border2); background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background-color .15s, border-color .15s; }
 .chk.on { background: var(--green); border-color: var(--green); }
 .chk svg { width: 14px; height: 14px; opacity: 0; transition: opacity .15s; }
 .chk.on svg { opacity: 1; }
@@ -211,6 +211,38 @@ body { padding-bottom: 100px; }
 .sel-food-name { color: var(--green); flex: 1; font-size: 13px; }
 .sel-food-cal { color: var(--text2); font-size: 12px; }
 .sel-food-remove { background: none; border: none; color: var(--red); cursor: pointer; font-size: 18px; line-height: 1; padding: 0; flex-shrink: 0; }
+
+/* INACTIVITY MODAL */
+.inact-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.82); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 24px; backdrop-filter: blur(6px); }
+.inact-modal.hidden { display: none; }
+.inact-box { background: var(--bg2); border: 1px solid var(--border2); border-radius: 20px; padding: 28px 22px 22px; max-width: 360px; width: 100%; }
+.inact-icon { font-size: 38px; text-align: center; margin-bottom: 12px; }
+.inact-title { font-size: 17px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+.inact-meta { font-size: 13px; color: var(--text2); text-align: center; margin-bottom: 6px; line-height: 1.5; }
+.inact-meta strong { color: var(--text); }
+.inact-question { font-size: 15px; font-weight: 600; text-align: center; margin: 16px 0 18px; }
+.inact-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.inact-btn { padding: 14px 8px; border-radius: 12px; border: 1px solid var(--border2); background: none; font-family: 'Heebo', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; }
+.inact-btn.forgot { background: var(--blue-bg); border-color: var(--blue); color: var(--blue); }
+.inact-btn.failed { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+
+/* MISSED DAYS EDITOR */
+.missed-modal { position: fixed; inset: 0; background: var(--bg); z-index: 2100; display: flex; flex-direction: column; }
+.missed-modal.hidden { display: none; }
+.missed-header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.missed-header-title { font-size: 16px; font-weight: 600; }
+.missed-body { flex: 1; overflow-y: auto; padding: 16px; }
+.missed-day-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--rs); padding: 14px; margin-bottom: 10px; }
+.missed-day-card.marked { opacity: 0.5; }
+.missed-day-title { font-size: 14px; font-weight: 500; margin-bottom: 10px; color: var(--text2); }
+.missed-day-title strong { color: var(--text); }
+.missed-day-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.mdbtn { padding: 9px 4px; border-radius: var(--rs); border: 1px solid var(--border); background: none; font-family: 'Heebo', sans-serif; font-size: 12px; font-weight: 600; color: var(--text3); cursor: pointer; text-align: center; transition: all .15s; }
+.mdbtn.sel-ok { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+.mdbtn.sel-part { background: var(--amber-bg); border-color: var(--amber); color: var(--amber); }
+.mdbtn.sel-bad { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+.mdbtn.sel-freeze { background: var(--blue-bg); border-color: var(--blue); color: var(--blue); }
+.missed-footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 14px 16px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -311,8 +343,9 @@ body { padding-bottom: 100px; }
 
   </div>
   <div class="save-bar">
-    <button class="btn primary" onclick="saveDay()">שמור יום</button>
-    <button class="btn danger" onclick="freezeDay()">הקפא יום זה</button>
+    <button class="btn primary" id="saveDayBtn" onclick="saveDay()">שמור יום</button>
+    <button class="btn danger" id="freezeBtn" onclick="freezeDay()">הקפא יום זה</button>
+    <button class="btn secondary" id="unfreezeBtn" onclick="unfreezeDay()" style="display:none">בטל הקפאה של היום</button>
   </div>
 </div>
 
@@ -375,6 +408,33 @@ body { padding-bottom: 100px; }
   </button>
 </div>
 
+<!-- INACTIVITY MODAL -->
+<div class="inact-modal hidden" id="inactivityModal">
+  <div class="inact-box">
+    <div class="inact-icon">⚠️</div>
+    <div class="inact-title">ראינו שלא עדכנת</div>
+    <div class="inact-meta">עדכון אחרון: <strong id="inactLastDate">—</strong></div>
+    <div class="inact-meta"><strong id="inactMissedCount">0 ימים</strong> ללא עדכון</div>
+    <div class="inact-question">מה קרה?</div>
+    <div class="inact-btns">
+      <button class="inact-btn forgot" onclick="inactivityForgot()">שכחתי לעדכן</button>
+      <button class="inact-btn failed" onclick="inactivityFailed()">נכשלתי — אפס אתגר</button>
+    </div>
+  </div>
+</div>
+
+<!-- MISSED DAYS EDITOR -->
+<div class="missed-modal hidden" id="missedModal">
+  <div class="missed-header">
+    <div class="missed-header-title">עדכן ימים חסרים</div>
+    <button class="cal-modal-close" onclick="closeMissedDays()">×</button>
+  </div>
+  <div class="missed-body" id="missedBody"></div>
+  <div class="missed-footer">
+    <button class="btn primary" style="margin-top:0" onclick="saveMissedDays()">שמור ומשך</button>
+  </div>
+</div>
+
 <!-- MOTIVATION MODAL -->
 <div class="modal-overlay hidden" id="motivationModal">
   <div class="modal-box">
@@ -416,7 +476,13 @@ body { padding-bottom: 100px; }
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-const START = new Date('2026-05-01T00:00:00');
+let START = (() => {
+  const s = localStorage.getItem('h75_start');
+  if (s) return new Date(s);
+  const d = new Date('2026-05-01T00:00:00');
+  localStorage.setItem('h75_start', d.toISOString());
+  return d;
+})();
 const BERLIN_S = 56, BERLIN_E = 60;
 const TASK_LABELS = {w1:'אימון 1',w2:'אימון 2',nu:'תזונה',pr:'התקדמות',ph:'תמונה'};
 
@@ -429,7 +495,23 @@ let timerSecs = 3600, timerRunning = false, timerInterval = null, timerElapsed =
 function dayIdx() {
   const now = new Date(); now.setHours(0,0,0,0);
   const s = new Date(START); s.setHours(0,0,0,0);
-  return Math.min(Math.max(Math.floor((now - s) / 86400000), 0), 74);
+  return Math.max(Math.floor((now - s) / 86400000), 0);
+}
+
+function countAllFrozen() {
+  let c = 0;
+  for (const k in data) { if (data[k] && data[k].freeze) c++; }
+  return c;
+}
+
+function getChallengeDay(calIdx) {
+  // Returns 1-based challenge day (skipping frozen days), or null if calIdx is frozen
+  if (data[calIdx] && data[calIdx].freeze) return null;
+  let frozenBefore = 0;
+  for (let i = 0; i < calIdx; i++) {
+    if (data[i] && data[i].freeze) frozenBefore++;
+  }
+  return calIdx - frozenBefore + 1;
 }
 
 function dateStr(offset) {
@@ -482,9 +564,12 @@ function toast(msg) {
 
 function render() {
   const idx = dayIdx();
-  document.getElementById('heroDay').textContent = idx + 1;
+  const isTodayFrozen = data[idx] && data[idx].freeze;
+  const challengeDay = getChallengeDay(idx);
+
+  document.getElementById('heroDay').textContent = challengeDay !== null ? challengeDay : (idx + 1);
   document.getElementById('heroDate').textContent = dateStr(idx);
-  document.getElementById('navDay').textContent = 'יום ' + (idx + 1);
+  document.getElementById('navDay').textContent = isTodayFrozen ? 'יום מוקפא' : ('יום ' + challengeDay);
 
   const streak = calcStreak();
   document.getElementById('streakBadge').textContent = 'סטריק: ' + streak + ' ימים';
@@ -499,13 +584,19 @@ function render() {
   document.getElementById('statOk').textContent = ok;
 
   const fc = document.getElementById('freezeCount');
-  if (frozen > 0) { fc.style.display = ''; fc.textContent = frozen + ' הקפאות'; }
+  const totalFrozen = countAllFrozen();
+  if (totalFrozen > 0) { fc.style.display = ''; fc.textContent = totalFrozen + ' הקפאות (+' + totalFrozen + ' ימים)'; }
   else fc.style.display = 'none';
 
   const pct = Math.round((ok / 75) * 100);
   document.getElementById('progPct').textContent = pct + '%';
-  document.getElementById('progLabel').textContent = ok + ' / 75';
+  document.getElementById('progLabel').textContent = ok + ' / 75 ימים פעילים';
   document.getElementById('progFill').style.width = pct + '%';
+
+  // Save bar: show unfreeze if today is frozen
+  document.getElementById('saveDayBtn').style.display = isTodayFrozen ? 'none' : '';
+  document.getElementById('freezeBtn').style.display = isTodayFrozen ? 'none' : '';
+  document.getElementById('unfreezeBtn').style.display = isTodayFrozen ? '' : 'none';
 
   renderDotGrid();
   renderHistory();
@@ -516,12 +607,15 @@ function renderDotGrid() {
   const g = document.getElementById('dotGrid');
   g.innerHTML = '';
   const idx = dayIdx();
-  for (let row = 0; row < 5; row++) {
+  const total = Math.max(75 + countAllFrozen(), idx + 1);
+  const rows = Math.ceil(total / 15);
+  const fmt = d => d.toLocaleDateString('he-IL', {day:'numeric', month:'short'});
+
+  for (let row = 0; row < rows; row++) {
     const startI = row * 15;
-    const endI = Math.min(startI + 14, 74);
+    const endI = Math.min(startI + 14, total - 1);
     const startDate = new Date(START); startDate.setDate(startDate.getDate() + startI);
     const endDate = new Date(START); endDate.setDate(endDate.getDate() + endI);
-    const fmt = d => d.toLocaleDateString('he-IL', {day:'numeric', month:'short'});
     const label = document.createElement('div');
     label.className = 'grid-row-label';
     label.textContent = `ימים ${startI+1}–${endI+1}  ·  ${fmt(startDate)} – ${fmt(endDate)}`;
@@ -530,7 +624,7 @@ function renderDotGrid() {
     rowEl.className = 'dot-row';
     for (let col = 0; col < 15; col++) {
       const i = startI + col;
-      if (i > 74) break;
+      if (i >= total) break;
       const dot = document.createElement('div');
       dot.className = 'dot';
       dot.textContent = i + 1;
@@ -552,7 +646,8 @@ function renderDotGrid() {
 function showDayDetail(i) {
   const d = data[i];
   const detail = document.getElementById('dayDetail');
-  document.getElementById('detailTitle').textContent = 'יום ' + (i + 1) + ' — ' + dateStr(i);
+  const cd = getChallengeDay(i);
+  document.getElementById('detailTitle').textContent = (cd ? 'יום ' + cd + ' (יומן ' + (i+1) + ')' : 'יום מוקפא ' + (i+1)) + ' — ' + dateStr(i);
   if (!d || status(d) === 'empty') {
     document.getElementById('detailBody').innerHTML = '<div style="color:var(--text2);font-size:14px">אין נתונים</div>';
   } else if (d.freeze) {
@@ -583,7 +678,7 @@ function renderHistory() {
     const c = colors[st] || colors.bad;
     html += `<div class="hist-item">
       <div class="hist-top">
-        <div class="hist-day">יום ${i+1} — ${dateStr(i)}</div>
+        <div class="hist-day">${getChallengeDay(i) ? 'יום ' + getChallengeDay(i) : '❄ הקפאה'} — ${dateStr(i)}</div>
         <span class="hist-badge" style="background:${c[0]};color:${c[1]}">${c[2]}</span>
       </div>`;
     if (!d.freeze) {
@@ -725,6 +820,126 @@ function switchPage(i) {
   if (i === 1) renderDotGrid();
   if (i === 2) renderHistory();
   if (i === 3) renderStats();
+}
+
+// ── UNFREEZE ─────────────────────────────────────────────────────────────────
+function unfreezeDay() {
+  const idx = dayIdx();
+  delete data[idx];
+  save();
+  render();
+  toast('הקפאה בוטלה');
+}
+
+// ── INACTIVITY / RESET ───────────────────────────────────────────────────────
+function checkInactivity() {
+  const today = new Date().toDateString();
+  if (localStorage.getItem('h75_inact_' + today)) return;
+
+  const calIdx = dayIdx();
+  if (calIdx === 0) return;
+
+  const missedDays = [];
+  for (let i = 0; i < calIdx; i++) {
+    if (!data[i]) missedDays.push(i);
+  }
+  if (missedDays.length === 0) return;
+
+  localStorage.setItem('h75_inact_' + today, '1');
+
+  // Find last day with data
+  let lastDay = -1;
+  for (let i = calIdx - 1; i >= 0; i--) {
+    if (data[i]) { lastDay = i; break; }
+  }
+  const lastDateStr = lastDay >= 0 ? ('יום ' + (lastDay + 1) + ' — ' + dateStr(lastDay)) : 'מעולם לא עדכנת';
+  document.getElementById('inactLastDate').textContent = lastDateStr;
+  document.getElementById('inactMissedCount').textContent = missedDays.length + (missedDays.length === 1 ? ' יום' : ' ימים');
+  document.getElementById('inactivityModal').classList.remove('hidden');
+}
+
+function closeInactivity() {
+  document.getElementById('inactivityModal').classList.add('hidden');
+}
+
+function inactivityForgot() {
+  closeInactivity();
+  openMissedDaysEditor();
+}
+
+function inactivityFailed() {
+  closeInactivity();
+  if (!confirm('לאפס את האתגר ולהתחיל מיום 1 מהיום?')) return;
+  resetChallenge();
+}
+
+function resetChallenge() {
+  data = {};
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  START = today;
+  localStorage.setItem('h75_start', today.toISOString());
+  save();
+  checks = {w1:false, w2:false, nu:false, pr:false, ph:false};
+  calSelection = [];
+  timerReset();
+  // Clear all daily flags
+  for (const k of Object.keys(localStorage)) {
+    if (k.startsWith('h75_motiv_') || k.startsWith('h75_inact_')) localStorage.removeItem(k);
+  }
+  render();
+  toast('האתגר אופס! יום 1 מהיום 🏁');
+}
+
+// ── MISSED DAYS EDITOR ───────────────────────────────────────────────────────
+let missedSelections = {}; // calIdx → 'ok'|'part'|'bad'|'freeze'
+
+function openMissedDaysEditor() {
+  const calIdx = dayIdx();
+  const missedDays = [];
+  for (let i = 0; i < calIdx; i++) {
+    if (!data[i]) missedDays.push(i);
+  }
+  missedSelections = {};
+
+  const body = document.getElementById('missedBody');
+  body.innerHTML = missedDays.map(i => `
+    <div class="missed-day-card" id="mcard_${i}">
+      <div class="missed-day-title"><strong>יום ${getChallengeDay(i) || (i+1)}</strong> — ${dateStr(i)}</div>
+      <div class="missed-day-btns">
+        <button class="mdbtn" id="mb_${i}_ok"    onclick="selectMissed(${i},'ok')">✓ הכל</button>
+        <button class="mdbtn" id="mb_${i}_part"  onclick="selectMissed(${i},'part')">~ חלקי</button>
+        <button class="mdbtn" id="mb_${i}_bad"   onclick="selectMissed(${i},'bad')">✗ כלום</button>
+        <button class="mdbtn" id="mb_${i}_freeze" onclick="selectMissed(${i},'freeze')">❄ הקפאה</button>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('missedModal').classList.remove('hidden');
+}
+
+function selectMissed(i, type) {
+  missedSelections[i] = type;
+  ['ok','part','bad','freeze'].forEach(t => {
+    const btn = document.getElementById('mb_' + i + '_' + t);
+    btn.className = 'mdbtn' + (t === type ? ' sel-' + t : '');
+  });
+}
+
+function saveMissedDays() {
+  for (const [idx, type] of Object.entries(missedSelections)) {
+    const i = parseInt(idx);
+    if (type === 'ok')     data[i] = {w1:true,w2:true,nu:true,pr:true,ph:true,ts:new Date().toISOString()};
+    else if (type === 'part') data[i] = {w1:true,w2:true,nu:false,pr:false,ph:false,ts:new Date().toISOString()};
+    else if (type === 'bad')  data[i] = {w1:false,w2:false,nu:false,pr:false,ph:false,ts:new Date().toISOString()};
+    else if (type === 'freeze') data[i] = {freeze:true,ts:new Date().toISOString()};
+  }
+  save();
+  closeMissedDays();
+  render();
+  toast('הימים עודכנו');
+}
+
+function closeMissedDays() {
+  document.getElementById('missedModal').classList.add('hidden');
 }
 
 // ── CELEBRATION ──────────────────────────────────────────────────────────────
@@ -925,6 +1140,7 @@ if ('serviceWorker' in navigator) {
 
 render();
 checkDailyMotivation();
+checkInactivity();
 </script>
 </body>
 </html>
